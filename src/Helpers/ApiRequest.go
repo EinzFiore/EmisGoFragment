@@ -1,4 +1,4 @@
-package helpers
+package emisHelpers
 
 import (
 	"bytes"
@@ -11,9 +11,8 @@ import (
 	"strconv"
 	"time"
 
-	"gitlab.com/EinzFiore/emis-modules/configs"
-
 	"github.com/gin-gonic/gin"
+	configs "gitlab.com/EinzFiore/emis-modules/configs"
 )
 
 type ApiMeta struct {
