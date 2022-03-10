@@ -19,7 +19,6 @@ func EmisAuth() gin.HandlerFunc {
 
 		// set cache key
 		cacheKey := fmt.Sprintf("%s", c.GetHeader("Authorization"))
-
 		cacheData, found := helpers.GetCache(cacheKey)
 		if found == false {
 			authRes, err := helpers.RequestWithAuth(http.MethodPost, authUrl, c)
@@ -58,47 +57,28 @@ func EmisAuth() gin.HandlerFunc {
 }
 
 func EmisAuthIris(c iris.Context) {
+
 	authUrl := fmt.Sprintf("%s/me", conf.GetConfig().AccountServiceUrl)
 	response := helpers.UnauthorizedRes("Unauthorized", http.StatusUnauthorized, nil)
-
-	// set cache key
-	cacheKey := fmt.Sprintf("%s", c.GetHeader("Authorization"))
-
-	cacheData, found := helpers.GetCache(cacheKey)
-	if found == false {
-		authRes, err := helpers.IrisRequestHTTP(http.MethodPost, authUrl, c)
-		if err != nil {
-			response.Message = err.Error()
-			c.StatusCode(http.StatusUnauthorized)
-			c.JSON(response)
-			return
-		}
-
-		// set cache
-		var userData UserData
-		err = json.Unmarshal([]byte(string(authRes)), &userData)
-
-		if err != nil {
-			response.Message = err.Error()
-			c.StatusCode(http.StatusUnauthorized)
-			c.JSON(response)
-			return
-		}
-
-		helpers.SetCache(cacheKey, userData, 10*time.Minute)
-		c.Values().Set("_userData", userData)
+	authRes, err := helpers.IrisRequestHTTP(http.MethodPost, authUrl, c)
+	if err != nil {
+		response.Message = err.Error()
+		c.StatusCode(http.StatusUnauthorized)
+		c.JSON(response)
+		return
 	}
 
-	if cacheData != nil {
-		var userData UserData
-		err := json.Unmarshal([]byte(string(cacheData)), &userData)
+	// set cache
+	var userData UserData
+	err = json.Unmarshal([]byte(string(authRes)), &userData)
 
-		if err != nil {
-			response.Message = err.Error()
-			c.StatusCode(http.StatusUnauthorized)
-			c.JSON(response)
-			return
-		}
-		c.Values().Set("_userData", userData)
+	if err != nil {
+		response.Message = err.Error()
+		c.StatusCode(http.StatusUnauthorized)
+		c.JSON(response)
+		return
 	}
+
+	c.Values().Set("_userData", userData)
+	c.Next()
 }
