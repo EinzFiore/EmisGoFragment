@@ -62,3 +62,31 @@ type UserData struct {
 		} `json:"master_role"`
 	} `json:"role"`
 }
+
+type UserRoleLevelId struct {
+	KemenagPusat    int
+	KemenagProvince int
+	KemenagKotaKab  int
+	KepalaLembaga   int
+	OperatorLembaga int
+	Guru            int
+	Kopertais       int
+	PAI             int
+	API             int
+	Pengawas        int
+}
+
+func GetUserRoleLevelId() *UserRoleLevelId {
+	return &UserRoleLevelId{
+		KemenagPusat:    2,
+		KemenagProvince: 3,
+		KemenagKotaKab:  4,
+		KepalaLembaga:   5,
+		OperatorLembaga: 6,
+		Guru:            11,
+		Kopertais:       7,
+		PAI:             9,
+		API:             10,
+		Pengawas:        12,
+	}
+}

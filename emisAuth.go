@@ -82,3 +82,15 @@ func EmisAuthIris(c iris.Context) {
 	c.Values().Set("_userData", userData)
 	c.Next()
 }
+
+func GrantUserRole(user UserData, role []int) bool {
+	status := false
+
+	for _, a := range role {
+		if a == user.Role.MasterRole.RoleLevel.ID {
+			status = true
+		}
+	}
+
+	return status
+}
